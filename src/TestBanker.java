@@ -2,7 +2,7 @@
 public class TestBanker {
 
 	public static void main(String[] args) {
-		System.out.println("-----²Ù×÷ÏµÍ³ÒøĞĞ¼ÒËã·¨-------");
+		System.out.println("-----æ“ä½œç³»ç»Ÿé“¶è¡Œå®¶ç®—æ³•-------");
 		TheBanker tb = new TheBanker();
 		String url = "demo.txt";
 		FileReaderIO frt = new FileReaderIO(url);
@@ -11,18 +11,18 @@ public class TestBanker {
 		int filePointer = 0;
 		boolean flag = true;
 		while (flag) {
-			System.out.println("1.ËÀËø±ÜÃâ£¬¼ìÑéÊÇ·ñ°²È«");
-			System.out.println("2.ËÀËø¼ì²â");
-			System.out.println("3.ÍË³ö£¡");
+			System.out.println("1.æ­»é”é¿å…ï¼Œæ£€éªŒæ˜¯å¦å®‰å…¨");
+			System.out.println("2.æ­»é”æ£€æµ‹");
+			System.out.println("3.é€€å‡ºï¼");
 			System.out.println("----------------------------------------------------------");
-			System.out.println("ÇëÑ¡Ôñ");
+			System.out.println("è¯·é€‰æ‹©");
 			try {
 				Thread.sleep(1000);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
 			int num = Integer.parseInt(subchoose[filePointer++]);
-			System.out.println("ÏµÍ³Ñ¡ÔñÎª£º" + num);
+			System.out.println("ç³»ç»Ÿé€‰æ‹©ä¸ºï¼š" + num);
 			switch (num) {
 			case 1:
 				tb.Security_check();
@@ -34,11 +34,11 @@ public class TestBanker {
 				int b = Integer.parseInt(subchoose[filePointer++]);
 				int c = Integer.parseInt(subchoose[filePointer++]);
 				int requests[] = {a,b,c};
-				tb.checkRequest(x,requests);//ËÀËø¼ì²â
+				tb.checkRequest(x,requests);//æ­»é”æ£€æµ‹
 				flag = true;
 				break;
 			case 3:
-				System.out.println("Ğ»Ğ»Ê¹ÓÃ,ÔÙ¼û!!!");
+				System.out.println("è°¢è°¢ä½¿ç”¨,å†è§!!!");
 				flag = false;
 				break;
 			}

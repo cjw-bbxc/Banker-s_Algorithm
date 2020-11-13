@@ -5,12 +5,12 @@ public class FileReaderIO {
 	
 	BufferedReader bfread = null;
 	
-	int m;  //½ø³Ì¸öÊı
-	int n; //Ã¿¸ö½ø³ÌµÄ×ÊÔ´¸öÊı
-	int[][] max;  //×î´óĞèÇó¾ØÕó
-	int[][] allocation;  // ÒÔ·ÖÅäµÄ×ÊÔ´£¨ÒÑÕ¼ÓĞµÄ×ÊÔ´£©
-	int[][] need;   // ĞèÇóµÄ×ÊÔ´ 
-	int[] available;   // ¿ÉÀûÓÃµÄ×ÊÔ´
+	int m;  //è¿›ç¨‹ä¸ªæ•°
+	int n; //æ¯ä¸ªè¿›ç¨‹çš„èµ„æºä¸ªæ•°
+	int[][] max;  //æœ€å¤§éœ€æ±‚çŸ©é˜µ
+	int[][] allocation;  // ä»¥åˆ†é…çš„èµ„æºï¼ˆå·²å æœ‰çš„èµ„æºï¼‰
+	int[][] need;   // éœ€æ±‚çš„èµ„æº 
+	int[] available;   // å¯åˆ©ç”¨çš„èµ„æº
 
 	
 	
@@ -48,18 +48,18 @@ public class FileReaderIO {
 		
 		String[] ss = s[0].split(" ");
 		
-		/** ÏµÍ³ÖĞµÄ¡¾½ø³ÌÊı¡¿*/
+		/** ç³»ç»Ÿä¸­çš„ã€è¿›ç¨‹æ•°ã€‘*/
 		this.m = Integer.parseInt(ss[0]);
-		/** ½ø³ÌµÄ¡¾×ÊÔ´ÀàĞÍÊı¡¿*/
+		/** è¿›ç¨‹çš„ã€èµ„æºç±»å‹æ•°ã€‘*/
 		this.n = Integer.parseInt(ss[1]);
 		
 		
 		
 		
-		max = new int[m][n];  //×î´óĞèÇó¾ØÕó
-		allocation = new int[m][n];  // ÒÔ·ÖÅäµÄ×ÊÔ´£¨ÒÑÕ¼ÓĞµÄ×ÊÔ´£©
-		need = new int[m][n];   // ĞèÇóµÄ×ÊÔ´ 
-		available = new int[n];   // ¿ÉÀûÓÃµÄ×ÊÔ´
+		max = new int[m][n];  //æœ€å¤§éœ€æ±‚çŸ©é˜µ
+		allocation = new int[m][n];  // ä»¥åˆ†é…çš„èµ„æºï¼ˆå·²å æœ‰çš„èµ„æºï¼‰
+		need = new int[m][n];   // éœ€æ±‚çš„èµ„æº 
+		available = new int[n];   // å¯åˆ©ç”¨çš„èµ„æº
 		
 		
 		ss = s[1].split(" ");		
@@ -67,7 +67,7 @@ public class FileReaderIO {
 		ss = s[2].split(" ");
 		this.allocation = Allocation(allocation,ss);
 		
-		for (int i=0;i<need.length;i++) {  //¼ÆËã³ö¸÷¸ö½ø³ÌĞèÇóµÄ×ÊÔ´Êı
+		for (int i=0;i<need.length;i++) {  //è®¡ç®—å‡ºå„ä¸ªè¿›ç¨‹éœ€æ±‚çš„èµ„æºæ•°
 		     for(int j=0;j<need[i].length;j++){
 		        need[i][j] = max[i][j] - allocation[i][j];
 		     }
@@ -75,7 +75,7 @@ public class FileReaderIO {
 		
 		ss = s[3].split(" ");
 		this.available = Available(available,ss);
-	    System.out.println("³õÊ¼»¯½á¹ûÎªÏÂ±í£º");
+	    System.out.println("åˆå§‹åŒ–ç»“æœä¸ºä¸‹è¡¨ï¼š");
 	    
 	    /*stem.out.println("------------------------------------------");
 	    System.out.println("\tMax\tAllocation\tNeed\tAvalable");
@@ -119,8 +119,8 @@ public class FileReaderIO {
 
 	int[][] Allocation(int[][] allocation,String[] ss) {
 		int k = 0;
-		for (int i=0;i<allocation.length;i++) {  //ÒÀ´ÎÊäÈë½ø³ÌµÄ¸÷¸öÕ¼ÓĞ×ÊÔ´Êı
-//			System.out.println("ÇëÊäÈëµÚp("+(i+1)+")½ø³ÌÖĞµÄAlloction£º");
+		for (int i=0;i<allocation.length;i++) {  //ä¾æ¬¡è¾“å…¥è¿›ç¨‹çš„å„ä¸ªå æœ‰èµ„æºæ•°
+//			System.out.println("è¯·è¾“å…¥ç¬¬p("+(i+1)+")è¿›ç¨‹ä¸­çš„Alloctionï¼š");
 			for (int j=0;j<allocation[i].length;j++) {
 				allocation[i][j] = Integer.parseInt(ss[k++]);
 			}
@@ -130,8 +130,8 @@ public class FileReaderIO {
 
 	int[][] Max(int[][] max,String[] ss) {
 		int k = 0;
-		for (int i=0;i<max.length;i++) {  //ÒÀ´ÎÊäÈë½ø³ÌµÄ¸÷¸ö×î´ó×ÊÔ´Êı
-//			System.out.println("ÇëÊäÈëµÚp("+(i+1)+")½ø³ÌµÄMax£º");
+		for (int i=0;i<max.length;i++) {  //ä¾æ¬¡è¾“å…¥è¿›ç¨‹çš„å„ä¸ªæœ€å¤§èµ„æºæ•°
+//			System.out.println("è¯·è¾“å…¥ç¬¬p("+(i+1)+")è¿›ç¨‹çš„Maxï¼š");
 			for(int j=0;j<max[i].length;j++){
 				max[i][j] = Integer.parseInt(ss[k++]);
 			}
@@ -144,7 +144,7 @@ public class FileReaderIO {
 	 * 
 	 * @param args
 	 * @Title: main   
-	 * @Description: ²âÊÔº¯Êı
+	 * @Description: æµ‹è¯•å‡½æ•°
 	 */
 //	public static void main(String[] args) {
 //		FileReaderText frt = new FileReaderText("Info.txt");

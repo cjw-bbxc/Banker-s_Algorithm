@@ -22,15 +22,5 @@ public class FileWriterIO {
 		ps.print(s);
 	}
 	
-//	/**
-//	 * 
-//	 * @param args
-//	 * @Title: main   
-//	 * @Description: ≤‚ ‘Test
-//	 */
-//	public static void main(String[] args) {
-//		FileWriterIO fwi = new FileWriterIO("Result.log");
-//		fwi.WriteTextLn("ŒÃº—À≥ «÷Ì£°£°£°");
-//	}
 	
 }

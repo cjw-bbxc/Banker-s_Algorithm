@@ -1,188 +1,1 @@
-import java.util.Scanner;
-
-public class TheBanker {
-	int m;  //½ø³Ì¸öÊı
-	int n; //Ã¿¸ö½ø³ÌµÄ×ÊÔ´¸öÊı
-	int[][] max;  //×î´óĞèÇó¾ØÕó
-	int[][] allocation;  // ÒÔ·ÖÅäµÄ×ÊÔ´£¨ÒÑÕ¼ÓĞµÄ×ÊÔ´£©
-	int[][] need;   // ĞèÇóµÄ×ÊÔ´ 
-	int[] available;   // ¿ÉÀûÓÃµÄ×ÊÔ´
-	int[] p;   // ¼ÇÂ¼°²È«ĞòÁĞ
-	boolean[] finish; // ±êÖ¾Ò»¸ö½ø³ÌÊÇ·ñÍê³É£¿true ±íÊ¾Íê³É false ±íÊ¾Î´Íê³É
-	Scanner input = new Scanner(System.in);
-	
-	FileReaderIO fri = null;
-	FileWriterIO fwi = null;
-	
-	
-	public TheBanker() {
-		fri = new FileReaderIO("Info.txt");
-		fri.InitInfo();
-		
-		this.m = fri.m;
-		this.n = fri.n;
-		this.need = fri.need;
-		this.max = fri.max;
-		this.allocation = fri.allocation;
-		this.available = fri.available;
-		
-		fwi = new FileWriterIO("Result.log");
-		print();
-	}
-	
-	//ÏÔÊ¾ÁĞ±í
-     public void print() {
-    	 fwi.WriteTextLn("------------------------------------------");
-    	 fwi.WriteTextLn("ÏµÍ³ÖĞµÄ¡¾½ø³ÌÊı¡¿:	"+m);
-    	 fwi.WriteTextLn("½ø³ÌµÄ¡¾×ÊÔ´ÀàĞÍÊı¡¿:	"+n);
-    	 fwi.WriteTextLn("------------------------------------------");
-	     fwi.WriteTextLn("\tMax\tAllocation\tNeed\tAvalable");
-	     fwi.WriteTextLn("\tA B C\tA B C\t\tA B C\tA B C");
-	     for (int i=0;i<m;i++) {
-		     fwi.WriteText("P("+i+"): ");
-		     fwi.WriteText(" ");
-			     for (int j=0;j<n;j++) {
-			         fwi.WriteText(max[i][j]+" ");    
-			     }
-			     fwi.WriteText("\t");
-			     for (int j=0;j<n;j++) {
-			           fwi.WriteText(allocation[i][j]+" ");
-			     }
-			     fwi.WriteText("\t\t");
-			     for (int j=0;j<n;j++) {
-			           fwi.WriteText(need[i][j]+" ");
-			     }
-			     fwi.WriteText("\t");
-			     if (i==0) {
-			        for (int j=0;j<n;j++) {
-			          fwi.WriteText(available[j]+" ");
-			        }
-			     }
-			     fwi.WriteTextLn("");
-	     }      
-	     fwi.WriteTextLn("------------------------------------------");
-     }
-	
-	//-------------------¼ìÑéÏµÍ³ÊÇ·ñ´¦ÓÚ°²È«ĞÔ×´Ì¬--------------------------
-	public boolean Security_check() {
-		int[] work = new int[n];
-		for (int i=0;i<n;i++) {
-			work[i] = available[i];// °ÑavailableµÄÖµ¸³¸øwork
-		}
-		finish = new boolean[m];
-		for (int i = 0; i < m; i++) {// ¿ªÊ¼°Ñ½ø³ÌÈ«²¿ÖÃÎ´·ÖÅä×´Ì¬ ¶¼Îªfalse£»
-			finish[i] = false;
-		}
-
-		int num = 0;// ¶ÔÃ¿¸ö½ø³Ì¶¼Òª°ÑËùÓĞ×ÊÔ´¶¼½øĞĞ±È½Ï
-		int num1 = 0;
-		int count = 0;// ¼ÇÂ¼¿ÉÒÔ·ÖÅäµÄĞòÁĞ
-		int count1 = 0;// ¼ÇÂ¼ËùÓĞĞòÁĞÊÇ·ñ·ÖÅä
-		p = new int[m];// ÕÒµ½°²È«ĞòÁĞ
-		
-		while (num1<m) {
-			for (int i=0;i<m;i++) {
-				if (finish[i] == false) {// ÅĞ¶ÏfinishµÄ×´Ì¬£¬Èç¹ûÎªtrueËµÃ÷¸Õ²ÅÒÑ¾­ÕÒµ½£¬²»ĞèÒªÖØ¸´¡£
-					for (int j=0;j<n;j++) {
-						if (need[i][j] <= work[j]) {// ±È½ÏÒ»¸ö½ø³ÌµÄ¸÷ÖÖ×ÊÔ´ÊÇ·ñÂú×ãÌõ¼ş
-							num++;
-						}
-					}
-					if (num == n) {// Èç¹ûÒ»¸ö½ø³ÌËùÓĞ×ÊÔ´¶¼Âú×ãÌõ¼şneed<work,ÔòÕÒµ½ÁËÒ»¸ö½ø³ÌÂú×ã
-						for (int k=0;k<n;k++) {
-							work[k] = work[k] + allocation[i][k];
-						}
-						finish[i] = true;// ÕÒµ½Ò»¸ö½ø³ÌÂú×ã
-						p[count++] = i;// ¼ÇÂ¼ÕÒµ½µÄÊÇµÚ¼¸¸ö½ø³Ì
-					}
-				}
-				num = 0;// ±ØĞë°ÑËüÇåÁã£¬ÖØĞÂÀ´ÕÒÏÂ¸ö×ÊÔ´ÖÖÀàµÄÃ¿ÖÖÊÇ·ñ¶¼Âú×ãÌõ¼ş
-			}
-			num1++;
-		}
-
-		// ¼ÇÂ¼ÓĞ¶àÉÙ¸öĞòÁĞ£»
-		for (int i=0;i<m;i++) {
-			if (finish[i] == true) {
-				count1++;// ¼ì²âÊÇ·ñËùÓĞµÄ½ø³Ì×îºó¶¼ÊÇtrue,
-			}
-		}
-		if (count1 == m) {// Èç¹ûĞòÁĞÀïÃæ×ÜÊıµÈÓÚ×Ü¹²ÓĞ¶àÉÙ³ÌĞò£¬¾ÍÕÒµ½ÁË°²È«µÄĞòÁĞ¡£²¢ÇÒÊä³ö¡£·´Ö®Ã»ÓĞÕÒµ½
-			fwi.WriteTextLn("´æÔÚÒ»¸ö°²È«ĞòÁĞ£¬°²È«ĞòÁĞÎª:");
-			for (int i=0;i<m;i++) {
-				if (i != m-1) {
-					fwi.WriteText("P"+p[i]+"-->");
-				} else {
-					fwi.WriteTextLn("P"+p[i]);
-				}
-			}
-			fwi.WriteTextLn("----------------------------------------------------");
-			return true;
-		} else {
-			fwi.WriteTextLn( "Ã»ÓĞÕÒµ½Ò»¸ö°²È«ĞòÁĞ£¬ÏµÍ³´¦ÓÚ²»°²È«×´Ì¬£¡");
-			return false;
-		}
-	}
-
-	public void checkRequest(int x,int[] y) {
-		int process = 0;// ¼ÇÂ¼ÊäÈëµÄÊÇµÚ¼¸¸ö½ø³Ì
-		int count2 = 0;// ¼ÇÂ¼ÊÔ·ÖÅä¹ı³ÌÖĞÂú×ãÌõ¼şµÄ¸öÊı
-		boolean flag = true;// Ö÷Òª·ÀÖ¹ÊäÈëµÄÊı×ÖÒÑ¾­³¬³öÁË±¾À´processÊıÁ¿£¬ÔòÒªÇóÖØĞÂÊäÈë
-		fwi.WriteTextLn("ÇëÊäÈëÒªÉêÇëµÄµÚ¼¸¸ö½ø³Ì£¬×¢Òâ½ø³ÌpÏÂ±êÊÇ´Ó0¿ªÊ¼µÄ");
-		while (flag) {
-			fwi.WriteTextLn("ÏµÍ³×Ô¶¯ÊäÈëÎª£º" + x);
-			process = x;
-			if (process > m) {
-				flag = true;
-				fwi.WriteTextLn("ÊäÈë³¬³öÁË±¾À´½ø³ÌµÄ·¶Î§£¬ÇëÖØĞÂÊäÈë£¡");
-			} else {
-				flag = false;
-
-			}
-		}
-		fwi.WriteTextLn("µÚ"+process+"¸ö½ø³ÌÌá³öÇëÇó");;
-		int[] request = new int[n];
-		fwi.WriteTextLn("ÊäÈëÒªÇëÇóµÄ×ÊÔ´Request:");
-		for (int i=0;i<n;i++) {
-			fwi.WriteTextLn("ÏµÍ³×Ô¶¯ÊäÈëÎª£º" + y[i]);
-			try {
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			request[i] = y[i];
-		}
-		// ÅĞ¶ÏÊÇ·ñ¿ÉÒÔ·ÖÅä
-		for (int i=0;i<n;i++) {
-			if (request[i] <= need[process-1][i] && request[i] <= available[i]) {
-				count2++;// ÅĞ¶ÏÊÇ·ñÃ¿¸ö½ø³ÌµÄËùÓĞ×ÊÔ´¶¼Âú×ãÊÔ·ÖÅäµÄÒªÇó£¬²¢¼ÇÂ¼¡£
-			}
-		}
-
-		if (count2 == n) {// Èç¹ûÃ¿Ò»ÖÖ×ÊÔ´¶¼Âú×ãÒªÇó£¬Ôò¿ÉÒÔ½ø³ÌÇëÇóÊÔ·ÖÅä
-			for (int j=0;j<n;j++) {
-				allocation[process-1][j] += request[j];  //×¢ÒâÊı×éÏÂ±êÊÇ´Ó0¿ªÊ¼µÄ
-				need[process-1][j] -= request[j];
-				available[j] -= request[j];
-			}
-			fwi.WriteTextLn("ÊÔ·ÖÅäÈçÏÂ-------->");
-			try {
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			print();// ´òÓ¡ÊÔ·ÖÅäµÄ½á¹û
-			fwi.WriteTextLn("½øĞĞ°²È«ĞÔÅĞ¶Ï");
-			flag = Security_check();// ÅĞ¶ÏÊÇ·ñÎª°²È«ĞòÁĞ
-			if (flag==false) {  //Èç¹ûÊÇ·ÖÅäºó²»ÄÜÕÒµ½Ò»¸ö°²È«ĞòÁĞ£¬Ôò·µ»Ø£¬²»½øĞĞ·ÖÅä
-				for (int j=0;j<n;j++) {
-					allocation[process-1][j] -= request[j];  //×¢ÒâÊı×éÏÂ±êÊÇ´Ó0¿ªÊ¼µÄ
-					need[process-1][j] += request[j];
-					available[j] += request[j];
-				}
-			}
-		} else {
-			fwi.WriteTextLn("²»ÄÜ½øĞĞÊÔ·ÖÅä,Ò²¾ÍÕÒ²»µ½°²È«ĞòÁĞ");
-		}
-	}
-}
+import java.util.Scanner;public class TheBanker {	int m;  //è¿›ç¨‹ä¸ªæ•°	int n; //æ¯ä¸ªè¿›ç¨‹çš„èµ„æºä¸ªæ•°	int[][] max;  //æœ€å¤§éœ€æ±‚çŸ©é˜µ	int[][] allocation;  // ä»¥åˆ†é…çš„èµ„æºï¼ˆå·²å æœ‰çš„èµ„æºï¼‰	int[][] need;   // éœ€æ±‚çš„èµ„æº 	int[] available;   // å¯åˆ©ç”¨çš„èµ„æº	int[] p;   // è®°å½•å®‰å…¨åºåˆ—	boolean[] finish; // æ ‡å¿—ä¸€ä¸ªè¿›ç¨‹æ˜¯å¦å®Œæˆï¼Ÿtrue è¡¨ç¤ºå®Œæˆ false è¡¨ç¤ºæœªå®Œæˆ	Scanner input = new Scanner(System.in);		FileReaderIO fri = null;	FileWriterIO fwi = null;			public TheBanker() {		fri = new FileReaderIO("Info.txt");		fri.InitInfo();				this.m = fri.m;		this.n = fri.n;		this.need = fri.need;		this.max = fri.max;		this.allocation = fri.allocation;		this.available = fri.available;				fwi = new FileWriterIO("Result.log");		print();	}		//æ˜¾ç¤ºåˆ—è¡¨     public void print() {    	 fwi.WriteTextLn("------------------------------------------");    	 fwi.WriteTextLn("ç³»ç»Ÿä¸­çš„ã€è¿›ç¨‹æ•°ã€‘:	"+m);    	 fwi.WriteTextLn("è¿›ç¨‹çš„ã€èµ„æºç±»å‹æ•°ã€‘:	"+n);    	 fwi.WriteTextLn("------------------------------------------");	     fwi.WriteTextLn("\tMax\tAllocation\tNeed\tAvalable");	     fwi.WriteTextLn("\tA B C\tA B C\t\tA B C\tA B C");	     for (int i=0;i<m;i++) {		     fwi.WriteText("P("+i+"): ");		     fwi.WriteText(" ");			     for (int j=0;j<n;j++) {			         fwi.WriteText(max[i][j]+" ");    			     }			     fwi.WriteText("\t");			     for (int j=0;j<n;j++) {			           fwi.WriteText(allocation[i][j]+" ");			     }			     fwi.WriteText("\t\t");			     for (int j=0;j<n;j++) {			           fwi.WriteText(need[i][j]+" ");			     }			     fwi.WriteText("\t");			     if (i==0) {			        for (int j=0;j<n;j++) {			          fwi.WriteText(available[j]+" ");			        }			     }			     fwi.WriteTextLn("");	     }      	     fwi.WriteTextLn("------------------------------------------");     }		//-------------------æ£€éªŒç³»ç»Ÿæ˜¯å¦å¤„äºå®‰å…¨æ€§çŠ¶æ€--------------------------	public boolean Security_check() {		int[] work = new int[n];		for (int i=0;i<n;i++) {			work[i] = available[i];// æŠŠavailableçš„å€¼èµ‹ç»™work		}		finish = new boolean[m];		for (int i = 0; i < m; i++) {// å¼€å§‹æŠŠè¿›ç¨‹å…¨éƒ¨ç½®æœªåˆ†é…çŠ¶æ€ éƒ½ä¸ºfalseï¼›			finish[i] = false;		}		int num = 0;// å¯¹æ¯ä¸ªè¿›ç¨‹éƒ½è¦æŠŠæ‰€æœ‰èµ„æºéƒ½è¿›è¡Œæ¯”è¾ƒ		int num1 = 0;		int count = 0;// è®°å½•å¯ä»¥åˆ†é…çš„åºåˆ—		int count1 = 0;// è®°å½•æ‰€æœ‰åºåˆ—æ˜¯å¦åˆ†é…		p = new int[m];// æ‰¾åˆ°å®‰å…¨åºåˆ—				while (num1<m) {			for (int i=0;i<m;i++) {				if (finish[i] == false) {// åˆ¤æ–­finishçš„çŠ¶æ€ï¼Œå¦‚æœä¸ºtrueè¯´æ˜åˆšæ‰å·²ç»æ‰¾åˆ°ï¼Œä¸éœ€è¦é‡å¤ã€‚					for (int j=0;j<n;j++) {						if (need[i][j] <= work[j]) {// æ¯”è¾ƒä¸€ä¸ªè¿›ç¨‹çš„å„ç§èµ„æºæ˜¯å¦æ»¡è¶³æ¡ä»¶							num++;						}					}					if (num == n) {// å¦‚æœä¸€ä¸ªè¿›ç¨‹æ‰€æœ‰èµ„æºéƒ½æ»¡è¶³æ¡ä»¶need<work,åˆ™æ‰¾åˆ°äº†ä¸€ä¸ªè¿›ç¨‹æ»¡è¶³						for (int k=0;k<n;k++) {							work[k] = work[k] + allocation[i][k];						}						finish[i] = true;// æ‰¾åˆ°ä¸€ä¸ªè¿›ç¨‹æ»¡è¶³						p[count++] = i;// è®°å½•æ‰¾åˆ°çš„æ˜¯ç¬¬å‡ ä¸ªè¿›ç¨‹					}				}				num = 0;// å¿…é¡»æŠŠå®ƒæ¸…é›¶ï¼Œé‡æ–°æ¥æ‰¾ä¸‹ä¸ªèµ„æºç§ç±»çš„æ¯ç§æ˜¯å¦éƒ½æ»¡è¶³æ¡ä»¶			}			num1++;		}		// è®°å½•æœ‰å¤šå°‘ä¸ªåºåˆ—ï¼›		for (int i=0;i<m;i++) {			if (finish[i] == true) {				count1++;// æ£€æµ‹æ˜¯å¦æ‰€æœ‰çš„è¿›ç¨‹æœ€åéƒ½æ˜¯true,			}		}		if (count1 == m) {// å¦‚æœåºåˆ—é‡Œé¢æ€»æ•°ç­‰äºæ€»å…±æœ‰å¤šå°‘ç¨‹åºï¼Œå°±æ‰¾åˆ°äº†å®‰å…¨çš„åºåˆ—ã€‚å¹¶ä¸”è¾“å‡ºã€‚åä¹‹æ²¡æœ‰æ‰¾åˆ°			fwi.WriteTextLn("å­˜åœ¨ä¸€ä¸ªå®‰å…¨åºåˆ—ï¼Œå®‰å…¨åºåˆ—ä¸º:");			for (int i=0;i<m;i++) {				if (i != m-1) {					fwi.WriteText("P"+p[i]+"-->");				} else {					fwi.WriteTextLn("P"+p[i]);				}			}			fwi.WriteTextLn("----------------------------------------------------");			return true;		} else {			fwi.WriteTextLn( "æ²¡æœ‰æ‰¾åˆ°ä¸€ä¸ªå®‰å…¨åºåˆ—ï¼Œç³»ç»Ÿå¤„äºä¸å®‰å…¨çŠ¶æ€ï¼");			return false;		}	}	public void checkRequest(int x,int[] y) {		int process = 0;// è®°å½•è¾“å…¥çš„æ˜¯ç¬¬å‡ ä¸ªè¿›ç¨‹		int count2 = 0;// è®°å½•è¯•åˆ†é…è¿‡ç¨‹ä¸­æ»¡è¶³æ¡ä»¶çš„ä¸ªæ•°		boolean flag = true;// ä¸»è¦é˜²æ­¢è¾“å…¥çš„æ•°å­—å·²ç»è¶…å‡ºäº†æœ¬æ¥processæ•°é‡ï¼Œåˆ™è¦æ±‚é‡æ–°è¾“å…¥		fwi.WriteTextLn("è¯·è¾“å…¥è¦ç”³è¯·çš„ç¬¬å‡ ä¸ªè¿›ç¨‹ï¼Œæ³¨æ„è¿›ç¨‹pä¸‹æ ‡æ˜¯ä»0å¼€å§‹çš„");		while (flag) {			fwi.WriteTextLn("ç³»ç»Ÿè‡ªåŠ¨è¾“å…¥ä¸ºï¼š" + x);			process = x;			if (process > m) {				flag = true;				fwi.WriteTextLn("è¾“å…¥è¶…å‡ºäº†æœ¬æ¥è¿›ç¨‹çš„èŒƒå›´ï¼Œè¯·é‡æ–°è¾“å…¥ï¼");			} else {				flag = false;			}		}		fwi.WriteTextLn("ç¬¬"+process+"ä¸ªè¿›ç¨‹æå‡ºè¯·æ±‚");;		int[] request = new int[n];		fwi.WriteTextLn("è¾“å…¥è¦è¯·æ±‚çš„èµ„æºRequest:");		for (int i=0;i<n;i++) {			fwi.WriteTextLn("ç³»ç»Ÿè‡ªåŠ¨è¾“å…¥ä¸ºï¼š" + y[i]);			try {				Thread.sleep(1000);			} catch (Exception e) {				System.out.println(e);			}			request[i] = y[i];		}		// åˆ¤æ–­æ˜¯å¦å¯ä»¥åˆ†é…		for (int i=0;i<n;i++) {			if (request[i] <= need[process-1][i] && request[i] <= available[i]) {				count2++;// åˆ¤æ–­æ˜¯å¦æ¯ä¸ªè¿›ç¨‹çš„æ‰€æœ‰èµ„æºéƒ½æ»¡è¶³è¯•åˆ†é…çš„è¦æ±‚ï¼Œå¹¶è®°å½•ã€‚			}		}		if (count2 == n) {// å¦‚æœæ¯ä¸€ç§èµ„æºéƒ½æ»¡è¶³è¦æ±‚ï¼Œåˆ™å¯ä»¥è¿›ç¨‹è¯·æ±‚è¯•åˆ†é…			for (int j=0;j<n;j++) {				allocation[process-1][j] += request[j];  //æ³¨æ„æ•°ç»„ä¸‹æ ‡æ˜¯ä»0å¼€å§‹çš„				need[process-1][j] -= request[j];				available[j] -= request[j];			}			fwi.WriteTextLn("è¯•åˆ†é…å¦‚ä¸‹-------->");			try {				Thread.sleep(1000);			} catch (Exception e) {				System.out.println(e);			}			print();// æ‰“å°è¯•åˆ†é…çš„ç»“æœ			fwi.WriteTextLn("è¿›è¡Œå®‰å…¨æ€§åˆ¤æ–­");			flag = Security_check();// åˆ¤æ–­æ˜¯å¦ä¸ºå®‰å…¨åºåˆ—			if (flag==false) {  //å¦‚æœæ˜¯åˆ†é…åä¸èƒ½æ‰¾åˆ°ä¸€ä¸ªå®‰å…¨åºåˆ—ï¼Œåˆ™è¿”å›ï¼Œä¸è¿›è¡Œåˆ†é…				for (int j=0;j<n;j++) {					allocation[process-1][j] -= request[j];  //æ³¨æ„æ•°ç»„ä¸‹æ ‡æ˜¯ä»0å¼€å§‹çš„					need[process-1][j] += request[j];					available[j] += request[j];				}			}		} else {			fwi.WriteTextLn("ä¸èƒ½è¿›è¡Œè¯•åˆ†é…,ä¹Ÿå°±æ‰¾ä¸åˆ°å®‰å…¨åºåˆ—");		}	}}
